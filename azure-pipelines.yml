@@ -45,7 +45,7 @@ jobs:
         ninja
         IF %errorlevel% NEQ 0 exit /b %errorlevel%
         dir
-        ".\one_tbb_example.exe"
+        one_tbb_example
         IF %errorlevel% NEQ 0 exit /b %errorlevel%
       displayName: 'Build and test'
 
