@@ -1,0 +1,70 @@
+jobs:
+  
+  - job: 'OSx'
+    displayName: "Build and test OSx"
+    timeoutInMinutes: 0
+    cancelTimeoutInMinutes: 60
+    pool:
+      vmImage: macOS-latest
+    variables:
+      cmakeBuildType: Release
+
+    steps:
+    - bash: |
+        brew update || true
+        brew install ninja || true
+      displayName: 'Install build dependencies'
+    - bash: |
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE:STRING=$(cmakeBuildType) -GNinja ..
+        ./one_tbb_example
+      displayName: 'Build and launch example'
+
+  - job: 'Windows'
+    displayName: "Build and test Windows"
+    timeoutInMinutes: 0
+    cancelTimeoutInMinutes: 60
+    pool:
+      vmImage: windows-latest
+    variables:
+      cmakeBuildType: Release
+
+    steps:
+    - script: |
+        choco install -y ninja --force --force-dependencies
+      displayName: 'Install build dependencies'
+    - script: |
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64
+        IF %errorlevel% NEQ 0 exit /b %errorlevel%
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE:STRING=$(cmakeBuildType) -G "Ninja" -DFORCE_EIGEN_DEFAULT_DENSE_INDEX_TYPE_TO_INT=ON $(cmakeVcpkgFlags) $(cmakeFlags) ..
+        IF %errorlevel% NEQ 0 exit /b %errorlevel%
+        ninja
+        IF %errorlevel% NEQ 0 exit /b %errorlevel%
+        dir
+        start "release\one_tbb_example.exe"
+        IF %errorlevel% NEQ 0 exit /b %errorlevel%
+      displayName: 'Build and test'
+
+  - job: 'linux'
+    displayName: "Build and test linux"
+    timeoutInMinutes: 0
+    cancelTimeoutInMinutes: 60
+    pool:
+      vmImage: ubuntu-latest
+    variables:
+      cmakeBuildType: Release
+
+    steps:
+    - bash: |
+        apt install ninja
+      displayName: 'Install build dependencies'
+    - bash: |
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE:STRING=$(cmakeBuildType) -GNinja ..
+        ./one_tbb_example
+      displayName: 'Build and launch example'
+
