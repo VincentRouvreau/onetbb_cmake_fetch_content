@@ -18,6 +18,7 @@ jobs:
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE:STRING=$(cmakeBuildType) -GNinja ..
+        ninja
         ./one_tbb_example
       displayName: 'Build and launch example'
 
@@ -44,7 +45,7 @@ jobs:
         ninja
         IF %errorlevel% NEQ 0 exit /b %errorlevel%
         dir
-        start "release\one_tbb_example.exe"
+        .\one_tbb_example.exe
         IF %errorlevel% NEQ 0 exit /b %errorlevel%
       displayName: 'Build and test'
 
@@ -59,12 +60,14 @@ jobs:
 
     steps:
     - bash: |
-        apt install ninja
+        apt update
+        apt -y install ninja-build
       displayName: 'Install build dependencies'
     - bash: |
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE:STRING=$(cmakeBuildType) -GNinja ..
+        ninja
         ./one_tbb_example
       displayName: 'Build and launch example'
 
