@@ -40,12 +40,12 @@ jobs:
         IF %errorlevel% NEQ 0 exit /b %errorlevel%
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE:STRING=$(cmakeBuildType) -G "Ninja" -DFORCE_EIGEN_DEFAULT_DENSE_INDEX_TYPE_TO_INT=ON $(cmakeVcpkgFlags) $(cmakeFlags) ..
+        cmake -DCMAKE_BUILD_TYPE:STRING=$(cmakeBuildType) -G "Ninja" ..
         IF %errorlevel% NEQ 0 exit /b %errorlevel%
         ninja
         IF %errorlevel% NEQ 0 exit /b %errorlevel%
         dir
-        .\one_tbb_example.exe
+        "one_tbb_example.exe"
         IF %errorlevel% NEQ 0 exit /b %errorlevel%
       displayName: 'Build and test'
 
@@ -60,8 +60,8 @@ jobs:
 
     steps:
     - bash: |
-        apt update
-        apt -y install ninja-build
+        sudo apt update
+        sudo apt -y install ninja-build
       displayName: 'Install build dependencies'
     - bash: |
         mkdir build
